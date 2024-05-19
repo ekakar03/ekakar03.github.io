@@ -7572,7 +7572,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-</div><p>The provided Python code is designed to scrape the current NASDAQ-100 component stocks from Wikipedia, load historical stock data from CSV files, filter this data based on the scraped tickers, and then process and display the data. Here's how each part of the code works:</p>
+</div><p>The provided Python code is designed to scrape the current NASDAQ-100 component stocks from Wikipedia, load historical stock data from CSV files from Kaggle, filter this data based on the scraped tickers, and then process and display the data. Here's how each part of the code works:</p>
 <p><strong>Step 1: Scrape NASDAQ-100 Components</strong><br>
 The script begins by fetching the web page that lists NASDAQ-100 index components using the `requests` library. It then parses the HTML of the page using `BeautifulSoup` to find a specific table tagged with 'wikitable sortable'. The `pandas` function `read_html` is then used to convert this HTML table into a DataFrame. This DataFrame presumably contains stock tickers among other details, and the script extracts a list of these tickers.</p>
 <p><strong>Step 2: Load and Filter Historical Data</strong><br>
@@ -7665,7 +7665,14 @@ Number of unique tickers in the DataFrame: 61
 </div>
 </div>
 </div>
-</div><p>Hello1</p>
+</div><p>The provided Python code snippet operates on a pandas DataFrame named 'filtered_data', which is assumed to contain historical stock data. The primary function of this code is to clean the data by removing any rows that have missing values and then to display the state of the data post-cleanup. Here's a breakdown of how each part of the code works:</p>
+<p><strong>Data Cleaning</strong><br>
+The code utilizes the `dropna()` method from pandas, which automatically removes any rows that contain at least one missing value. The `inplace=True` parameter is used to modify the DataFrame directly, meaning that no additional assignment is needed to store the cleaned data.</p>
+<p><strong>Output Explanation</strong><br>
+After removing rows with missing values, the script prints the total number of remaining rows in the DataFrame. This helps in assessing the impact of the cleaning process on the dataset's size. Following this, the `head()` method is called to print the first few rows of the cleaned DataFrame. This provides a quick snapshot of the data, confirming that the cleaning operation was successful and giving a glimpse into the structure and content of the dataset.</p>
+<p><strong>Displayed Output</strong><br>
+The output shown in the image indicates that after the cleaning process, the DataFrame retains 464,698 rows. The snapshot of the first few entries reveals that the data includes dates from February 1990, and features such as 'Low', 'Open', 'Volume', 'High', 'Close', 'Adjusted Close', and 'Ticker' for the stock symbol 'CSCO' (Cisco Systems). The consistency in the 'Ticker' column suggests that this segment of the data specifically pertains to Cisco Systems stock during that period.</p>
+<p>This process is critical in ensuring the quality and reliability of the data used for further analysis, such as financial modeling or predictive analytics, as missing values can lead to inaccurate results or errors in computations.</p>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e435c4b5-6a71-4532-aa1a-6e5ee62cb0db">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
