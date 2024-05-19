@@ -8560,189 +8560,161 @@ Average magnitude of growth: 1.89%
 </div>
 </div>
 </div><p>Hello1</p>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=3a4ed580-9a4e-464f-be38-3af236070801">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=26051329-145c-4195-bbed-bce75b4b3b15">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
-<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="kn">from</span> <span class="nn">tensorflow</span> <span class="kn">import</span> <span class="n">keras</span>
-<span class="kn">from</span> <span class="nn">tensorflow.keras</span> <span class="kn">import</span> <span class="n">layers</span>
-<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">r2_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_absolute_error</span>
 
-<span class="c1"># Step 1: Scrape current NASDAQ-100 components</span>
+
+<span class="c1"># Scrape NASDAQ-100 components</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s1">'https://en.wikipedia.org/wiki/Nasdaq-100#Components'</span>
 <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">'html.parser'</span><span class="p">)</span>
 <span class="n">table</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">'table'</span><span class="p">,</span> <span class="p">{</span><span class="s1">'class'</span><span class="p">:</span> <span class="s1">'wikitable sortable'</span><span class="p">})</span>
 <span class="n">current_nasdaq</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_html</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">table</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
 
-<span class="c1"># Check the structure of current_nasdaq</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Current NASDAQ-100 components:"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">current_nasdaq</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">current_nasdaq</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-
-<span class="c1"># Assuming the ticker is in a column named similar to 'Ticker'</span>
 <span class="n">current_nasdaq</span><span class="p">[</span><span class="s1">'Ticker'</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_nasdaq</span><span class="p">[</span><span class="s1">'Ticker'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">r</span><span class="s1">'\.'</span><span class="p">,</span> <span class="s1">''</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">current_tickers</span> <span class="o">=</span> <span class="n">current_nasdaq</span><span class="p">[</span><span class="s1">'Ticker'</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Current NASDAQ-100 Tickers:"</span><span class="p">,</span> <span class="n">current_tickers</span><span class="p">)</span>
 
-<span class="c1"># Step 2: Load historical data and filter based on current tickers</span>
+<span class="c1"># Load and filter historical data</span>
 <span class="n">directory_path</span> <span class="o">=</span> <span class="s1">'/Users/edriskakar/Downloads/stock_market_data/nasdaq/csv'</span>
 <span class="n">all_files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">directory_path</span><span class="p">)</span>
 <span class="n">csv_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">all_files</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">'.csv'</span><span class="p">)]</span>
-
-<span class="c1"># Define the expected columns in the CSV files</span>
 <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Date'</span><span class="p">,</span> <span class="s1">'Low'</span><span class="p">,</span> <span class="s1">'Open'</span><span class="p">,</span> <span class="s1">'Volume'</span><span class="p">,</span> <span class="s1">'High'</span><span class="p">,</span> <span class="s1">'Close'</span><span class="p">,</span> <span class="s1">'Adjusted Close'</span><span class="p">]</span>
-
-<span class="c1"># Create an empty DataFrame to store the filtered data</span>
 <span class="n">filtered_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
 
-<span class="c1"># Loop through each CSV file</span>
 <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">csv_files</span><span class="p">:</span>
     <span class="n">stock_symbol</span> <span class="o">=</span> <span class="n">file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'.csv'</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">stock_symbol</span> <span class="ow">in</span> <span class="n">current_tickers</span><span class="p">:</span>
         <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-            <span class="c1"># Read the CSV with predefined column names, skipping malformed lines</span>
-            <span class="n">stock_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">on_bad_lines</span><span class="o">=</span><span class="s1">'skip'</span><span class="p">)</span>
-            <span class="n">stock_data</span><span class="p">[</span><span class="s1">'Ticker'</span><span class="p">]</span> <span class="o">=</span> <span class="n">stock_symbol</span>
-            <span class="n">filtered_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">filtered_data</span><span class="p">,</span> <span class="n">stock_data</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Processed </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">end_time</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds"</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error processing </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">stock_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">on_bad_lines</span><span class="o">=</span><span class="s1">'skip'</span><span class="p">)</span>
+        <span class="n">stock_data</span><span class="p">[</span><span class="s1">'Ticker'</span><span class="p">]</span> <span class="o">=</span> <span class="n">stock_symbol</span>
+        <span class="n">filtered_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">filtered_data</span><span class="p">,</span> <span class="n">stock_data</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="n">filtered_data</span><span class="p">[</span><span class="s1">'Date'</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">filtered_data</span><span class="p">[</span><span class="s1">'Date'</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">'coerce'</span><span class="p">)</span>
-<span class="n">filtered_data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Tickers in Filtered Data:"</span><span class="p">,</span> <span class="n">filtered_data</span><span class="p">[</span><span class="s1">'Ticker'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+<span class="c1"># Attempt to parse dates, specifying expected format and coercing errors</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">filtered_data</span><span class="p">[</span><span class="s1">'Date'</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">filtered_data</span><span class="p">[</span><span class="s1">'Date'</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">'</span><span class="si">%d</span><span class="s1">-%m-%Y'</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">'coerce'</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+    <span class="c1"># If there are multiple formats, try without specifying the format</span>
+    <span class="n">filtered_data</span><span class="p">[</span><span class="s1">'Date'</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">filtered_data</span><span class="p">[</span><span class="s1">'Date'</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">'coerce'</span><span class="p">)</span>
 
-<span class="c1"># Remove duplicates based on 'Date' and 'Ticker' columns</span>
-<span class="n">filtered_data</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'Date'</span><span class="p">,</span> <span class="s1">'Ticker'</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">filtered_data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">'Date'</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">filtered_data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'Date'</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Drop rows where dates could not be parsed</span>
 
-<span class="c1"># Merge with GICS Sector data</span>
-<span class="n">merged_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">filtered_data</span><span class="p">,</span> <span class="n">current_nasdaq</span><span class="p">[[</span><span class="s1">'Ticker'</span><span class="p">,</span> <span class="s1">'GICS Sector'</span><span class="p">]],</span> <span class="n">on</span><span class="o">=</span><span class="s1">'Ticker'</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Tickers in Merged Data:"</span><span class="p">,</span> <span class="n">merged_data</span><span class="p">[</span><span class="s1">'Ticker'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+<span class="c1"># Feature Engineering</span>
+<span class="n">filtered_data</span><span class="p">[</span><span class="s1">'Prev_Close'</span><span class="p">]</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'Ticker'</span><span class="p">)[</span><span class="s1">'Close'</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">filtered_data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Removing NaN values after shifting</span>
 
-<span class="c1"># Normalize columns</span>
-<span class="n">merged_data</span><span class="p">[</span><span class="s1">'N_Open'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">'Open'</span><span class="p">]</span> <span class="o">-</span> <span class="n">merged_data</span><span class="p">[</span><span class="s1">'Open'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">merged_data</span><span class="p">[</span><span class="s1">'Open'</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
-<span class="n">merged_data</span><span class="p">[</span><span class="s1">'N_High'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">'High'</span><span class="p">]</span> <span class="o">-</span> <span class="n">merged_data</span><span class="p">[</span><span class="s1">'High'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">merged_data</span><span class="p">[</span><span class="s1">'High'</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
-<span class="n">merged_data</span><span class="p">[</span><span class="s1">'N_Low'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">'Low'</span><span class="p">]</span> <span class="o">-</span> <span class="n">merged_data</span><span class="p">[</span><span class="s1">'Low'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">merged_data</span><span class="p">[</span><span class="s1">'Low'</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
-<span class="n">merged_data</span><span class="p">[</span><span class="s1">'N_Close'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">'Close'</span><span class="p">]</span> <span class="o">-</span> <span class="n">merged_data</span><span class="p">[</span><span class="s1">'Close'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">merged_data</span><span class="p">[</span><span class="s1">'Close'</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
-<span class="n">merged_data</span><span class="p">[</span><span class="s1">'N_Volume'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">'Volume'</span><span class="p">]</span> <span class="o">-</span> <span class="n">merged_data</span><span class="p">[</span><span class="s1">'Volume'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">merged_data</span><span class="p">[</span><span class="s1">'Volume'</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="c1"># Prepare data for ML</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">[[</span><span class="s1">'Volume'</span><span class="p">,</span> <span class="s1">'Prev_Close'</span><span class="p">]]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">[</span><span class="s1">'Close'</span><span class="p">]</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 
-<span class="c1"># Sigmoid encoding to bring data within the [0,1] range</span>
-<span class="n">merged_data</span><span class="p">[</span><span class="s1">'SE_N_Open'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">'N_Open'</span><span class="p">]))</span>
-<span class="n">merged_data</span><span class="p">[</span><span class="s1">'SE_N_High'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">'N_High'</span><span class="p">]))</span>
-<span class="n">merged_data</span><span class="p">[</span><span class="s1">'SE_N_Low'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">'N_Low'</span><span class="p">]))</span>
-<span class="n">merged_data</span><span class="p">[</span><span class="s1">'SE_N_Close'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">'N_Close'</span><span class="p">]))</span>
-<span class="n">merged_data</span><span class="p">[</span><span class="s1">'SE_N_Volume'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">'N_Volume'</span><span class="p">]))</span>
-
-<span class="c1"># Pivot data</span>
-<span class="n">m_cp_p</span> <span class="o">=</span> <span class="n">merged_data</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">'Date'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">'Ticker'</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">'SE_N_Open'</span><span class="p">,</span> <span class="s1">'SE_N_High'</span><span class="p">,</span> <span class="s1">'SE_N_Low'</span><span class="p">,</span> <span class="s1">'SE_N_Close'</span><span class="p">,</span> <span class="s1">'SE_N_Volume'</span><span class="p">])</span>
-
-<span class="c1"># Choose target company</span>
-<span class="n">target_company</span> <span class="o">=</span> <span class="s1">'ADBE'</span>
-
-<span class="c1"># Encode target industry</span>
-<span class="k">def</span> <span class="nf">encode_target_industry</span><span class="p">():</span>
-    <span class="n">target_industry</span> <span class="o">=</span> <span class="n">merged_data</span><span class="p">[</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">'Ticker'</span><span class="p">]</span> <span class="o">==</span> <span class="n">target_company</span><span class="p">][</span><span class="s1">'GICS Sector'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">industries</span> <span class="o">=</span> <span class="n">merged_data</span><span class="p">[</span><span class="s1">'GICS Sector'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-    <span class="n">encoding</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-    <span class="n">encoding</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">industries</span> <span class="o">==</span> <span class="n">target_industry</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">%</span> <span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># ensure encoding has a length of 10</span>
-    <span class="k">return</span> <span class="n">encoding</span>
-
-<span class="c1"># Prepare x and y data</span>
-<span class="n">backlog_days</span> <span class="o">=</span> <span class="mi">20</span>
-<span class="n">xs</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">ys</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m_cp_p</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">backlog_days</span><span class="p">):</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">encode_target_industry</span><span class="p">())</span>
-    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">backlog_days</span><span class="p">):</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m_cp_p</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
-    <span class="n">xs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">m_cp_p</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">backlog_days</span><span class="p">][</span><span class="s1">'SE_N_Open'</span><span class="p">][</span><span class="n">target_company</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">m_cp_p</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">backlog_days</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="s1">'SE_N_Close'</span><span class="p">][</span><span class="n">target_company</span><span class="p">]:</span>
-        <span class="n">ys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">ys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-<span class="n">np_xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
-<span class="n">np_ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span>
-
-<span class="c1"># Split data into training and testing sets</span>
-<span class="n">split_index</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np_ys</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">11</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
-<span class="n">train_xs</span> <span class="o">=</span> <span class="n">np_xs</span><span class="p">[:</span><span class="n">split_index</span><span class="p">]</span>
-<span class="n">train_ys</span> <span class="o">=</span> <span class="n">np_ys</span><span class="p">[:</span><span class="n">split_index</span><span class="p">]</span>
-<span class="n">test_xs</span> <span class="o">=</span> <span class="n">np_xs</span><span class="p">[</span><span class="n">split_index</span><span class="p">:]</span>
-<span class="n">test_ys</span> <span class="o">=</span> <span class="n">np_ys</span><span class="p">[</span><span class="n">split_index</span><span class="p">:]</span>
-
-<span class="c1"># Verify shapes</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Shape of training data:"</span><span class="p">,</span> <span class="n">train_xs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Shape of training labels:"</span><span class="p">,</span> <span class="n">train_ys</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-
-<span class="c1"># Design the neural network model</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
-    <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">backlog_days</span> <span class="o">*</span> <span class="mi">5</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">'Ticker'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">+</span> <span class="mi">10</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">),</span>  <span class="c1"># input layer</span>
-    <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">'Ticker'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">*</span> <span class="n">backlog_days</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'relu'</span><span class="p">),</span>          <span class="c1"># hidden layer</span>
-    <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">'softmax'</span><span class="p">)</span>                                                         <span class="c1"># output layer</span>
-<span class="p">])</span>
-
-<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">'adam'</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">'sparse_categorical_crossentropy'</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">'accuracy'</span><span class="p">])</span>
-
-<span class="c1"># Fit the model</span>
-<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_xs</span><span class="p">,</span> <span class="n">train_ys</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
+<span class="c1"># Define and train the model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
 
 <span class="c1"># Evaluate the model</span>
-<span class="n">test_loss</span><span class="p">,</span> <span class="n">test_acc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">test_xs</span><span class="p">,</span> <span class="n">test_ys</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">'Test accuracy:'</span><span class="p">,</span> <span class="n">test_acc</span><span class="p">)</span>
+<span class="n">mse</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="n">r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mean Squared Error: </span><span class="si">{</span><span class="n">mse</span><span class="si">}</span><span class="s2">, R^2 Score: </span><span class="si">{</span><span class="n">r2</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">[[</span><span class="s1">'Volume'</span><span class="p">,</span> <span class="s1">'Prev_Close'</span><span class="p">]]</span>  <span class="c1"># Independent variables</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="p">[</span><span class="s1">'Close'</span><span class="p">]</span>  <span class="c1"># Dependent variable (target)</span>
 
-<span class="c1"># Perform K-Fold cross-validation</span>
-<span class="n">number_folds</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">number_epochs</span> <span class="o">=</span> <span class="mi">20</span>
-<span class="n">kfolds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">np_xs</span><span class="p">,</span> <span class="n">number_folds</span><span class="p">)</span>
+<span class="c1"># Splitting the data into training and testing sets</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 
-<span class="n">slices</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-    <span class="n">index</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">kfolds</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">slices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+<span class="c1"># Further split the training data into training and validation sets</span>
+<span class="n">X_train_part</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">y_train_part</span><span class="p">,</span> <span class="n">y_val</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>  <span class="c1"># 0.25 x 0.8 = 0.2</span>
 
-<span class="n">scorelst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">number_folds</span><span class="p">)</span>
+<span class="c1"># Define and train the Linear Regression model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_part</span><span class="p">,</span> <span class="n">y_train_part</span><span class="p">)</span>
 
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_folds</span><span class="p">):</span>
-    <span class="n">training_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np_xs</span><span class="p">[:</span><span class="n">slices</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">np_xs</span><span class="p">[</span><span class="n">slices</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">training_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np_ys</span><span class="p">[:</span><span class="n">slices</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">np_ys</span><span class="p">[</span><span class="n">slices</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">testing_data</span> <span class="o">=</span> <span class="n">np_xs</span><span class="p">[</span><span class="n">slices</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span><span class="n">slices</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span>
-    <span class="n">testing_target</span> <span class="o">=</span> <span class="n">np_ys</span><span class="p">[</span><span class="n">slices</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span><span class="n">slices</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training_data</span><span class="p">,</span> <span class="n">training_target</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="n">number_epochs</span><span class="p">)</span>
-    <span class="n">loss</span><span class="p">,</span> <span class="n">score</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">testing_data</span><span class="p">,</span> <span class="n">testing_target</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">scorelst</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span>
+<span class="c1"># Predictions for validation and test sets</span>
+<span class="n">y_val_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_val</span><span class="p">)</span>
+<span class="n">y_test_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
 
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kfolds</span><span class="p">)):</span>  
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Score of </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">th fold:'</span><span class="p">,</span> <span class="n">scorelst</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="c1"># Evaluate the model</span>
+<span class="n">mse_val</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_val</span><span class="p">,</span> <span class="n">y_val_pred</span><span class="p">)</span>
+<span class="n">r2_val</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_val</span><span class="p">,</span> <span class="n">y_val_pred</span><span class="p">)</span>
+<span class="n">mse_test</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred</span><span class="p">)</span>
+<span class="n">r2_test</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">'Average accuracy of Model:'</span><span class="p">,</span> <span class="n">scorelst</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Validation MSE: </span><span class="si">{</span><span class="n">mse_val</span><span class="si">}</span><span class="s2">, Validation R^2: </span><span class="si">{</span><span class="n">r2_val</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Test MSE: </span><span class="si">{</span><span class="n">mse_test</span><span class="si">}</span><span class="s2">, Test R^2: </span><span class="si">{</span><span class="n">r2_test</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">rmse_test</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># MAE Calculation</span>
+<span class="n">mae_test</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred</span><span class="p">)</span>
+
+<span class="c1"># Adjusted R-squared Calculation</span>
+<span class="k">def</span> <span class="nf">adjusted_r2</span><span class="p">(</span><span class="n">r_square</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
+    <span class="n">adj_r_squared</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">r_square</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">-</span> <span class="n">features</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">adj_r_squared</span>
+
+<span class="n">adj_r2_val</span> <span class="o">=</span> <span class="n">adjusted_r2</span><span class="p">(</span><span class="n">r2_val</span><span class="p">,</span> <span class="n">y_val</span><span class="p">,</span> <span class="n">X_val</span><span class="p">)</span>
+<span class="n">adj_r2_test</span> <span class="o">=</span> <span class="n">adjusted_r2</span><span class="p">(</span><span class="n">r2_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Test RMSE: </span><span class="si">{</span><span class="n">rmse_test</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Test MAE: </span><span class="si">{</span><span class="n">mae_test</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Validation Adjusted R²: </span><span class="si">{</span><span class="n">adj_r2_val</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Test Adjusted R²: </span><span class="si">{</span><span class="n">adj_r2_test</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=08a9ec3c-fdca-4891-acc7-4ed1619bc293">
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>/var/folders/wf/mg0p_sln2h1gfct_ddb6z9zh0000gn/T/ipykernel_11384/3999267501.py:16: FutureWarning: Passing literal html to 'read_html' is deprecated and will be removed in a future version. To read from a literal string, wrap it in a 'StringIO' object.
+  current_nasdaq = pd.read_html(str(table))[0]
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Mean Squared Error: 7.725206133771539, R^2 Score: 0.9992453938891476
+Validation MSE: 7.96802066563735, Validation R^2: 0.9991726744130284
+Test MSE: 7.729541626453284, Test R^2: 0.9992449703937464
+Test RMSE: 2.7802053209166555
+Test MAE: 0.8142762414268677
+Validation Adjusted R²: 0.9991726566065288
+Test Adjusted R²: 0.9992449541434455
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>/usr/local/lib/python3.11/site-packages/sklearn/metrics/_regression.py:483: FutureWarning: 'squared' is deprecated in version 1.4 and will be removed in 1.6. To calculate the root mean squared error, use the function'root_mean_squared_error'.
+  warnings.warn(
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=29eabc5e-3934-4072-88ca-87fe231b6a18">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8752,7 +8724,7 @@ Average magnitude of growth: 1.89%
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span> 
 </pre></div>
-</div><p>Hello1</p>
+</div>
 </div>
 </div>
 </div>
