@@ -7716,7 +7716,31 @@ The output shown in the image indicates that after the cleaning process, the Dat
 </div>
 </div>
 </div>
-</div><p>Hello1</p>
+</div><h1>Purpose and Functionality of the Code</h1>
+    <p>
+        The script is designed to analyze the stock market performance of companies listed in the NASDAQ-100 index. It involves several steps:
+        <ol>
+            <li><strong>Data Collection:</strong> Using Python libraries <code>requests</code> and <code>BeautifulSoup</code>, the script scrapes NASDAQ-100 component data from Wikipedia, capturing ticker symbols and relevant sector information.</li>
+            <li><strong>Data Processing:</strong> Historical stock data is loaded from CSV files stored in a specified directory. Only stocks that match the NASDAQ-100 components are processed. This data includes several financial metrics for each stock, with an emphasis on 'Closing Prices'.</li>
+            <li><strong>Data Merging and Cleaning:</strong> The stock data is merged with sector information, and any incomplete records are cleaned out to ensure accuracy in the dataset.</li>
+            <li><strong>Data Visualization:</strong> For each sector, closing prices of the constituent companies are plotted over time to visualize historical performance and growth patterns.</li>
+        </ol>
+    </p>
+
+    <h1>Analysis of Graphs</h1>
+    <p>
+        The generated graphs depict the closing prices of NASDAQ-100 companies across different sectors over time. Each graph represents a different sector, such as Information Technology, Health Care, and Consumer Discretionary. Here's what the graphs typically illustrate:
+        <ul>
+            <li><strong>Trend Identification:</strong> Each line in the graph corresponds to a company, allowing viewers to identify growth trends, seasonal variations, and potential market disruptions affecting stock prices.</li>
+            <li><strong>Sector Comparison:</strong> By examining multiple graphs, one can compare the performance of sectors against each other. For instance, technology stocks might show rapid growth compared to industrials, reflecting sector-specific dynamics.</li>
+            <li><strong>Historical Performance:</strong> Long-term trends, such as the steady rise in tech stocks or the volatility in healthcare, are evident, providing insights into the historical resilience or susceptibility of sectors to external factors.</li>
+        </ul>
+    </p>
+
+    <h1>Conclusion</h1>
+    <p>
+        These visualizations are crucial for investors, analysts, and enthusiasts aiming to understand market behaviors, assess sector health, and make informed investment decisions based on historical data trends.
+    </p>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=0402579a-a82e-4a08-979a-b815fc1103b2">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
