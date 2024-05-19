@@ -8559,7 +8559,29 @@ Average magnitude of growth: 1.89%
 </div>
 </div>
 </div>
-</div><p>Hello1</p>
+</div><p>
+    The code begins by scraping the list of current NASDAQ-100 components from Wikipedia, ensuring that the latest company data is used for the analysis. This is crucial as the stock market is highly dynamic and company listings on indices like the NASDAQ-100 can frequently change. The tickers are extracted and any dots within them are removed to maintain consistency.
+</p>
+<p>
+    Following data acquisition, the code loads historical stock data from a predefined directory. This data includes several features such as open, high, low, close, and volume of stocks traded, crucial for analyzing stock performance. The stocks included in the analysis are filtered to ensure that only those that are part of the NASDAQ-100 are considered.
+</p>
+<p>
+    To prepare this data for modeling, it is first cleaned and pre-processed. Dates are converted into a proper datetime format, and any rows with missing dates are discarded to maintain data integrity. The feature engineering step involves calculating the 'Previous Close' for each stock, which represents the last closing price and is used to predict the next day's closing price.
+</p>
+<p>
+    The data is then split into training and testing sets to evaluate the model's performance. A portion of the training set is further split into a validation set to fine-tune model parameters without overfitting. The model is trained using linear regression, a simple yet powerful technique for numerical prediction tasks. After training, predictions are made on both the test and validation sets.
+</p>
+<p>
+    The performance of the model is assessed using several statistical metrics:
+    <ul>
+        <li><strong>Mean Squared Error (MSE)</strong> and <strong>Root Mean Squared Error (RMSE)</strong>: Indicate the average squared difference and the square root of this difference between the observed actual outcomes and the outcomes predicted by the model.</li>
+        <li><strong>Mean Absolute Error (MAE)</strong>: Represents the average of the absolute differences between the predicted values and actual values, giving an idea of how wrong the predictions were.</li>
+        <li><strong>R-squared (R²)</strong> and <strong>Adjusted R-squared</strong>: Measure the proportion of variance in the dependent variable that is predictable from the independent variables and adjusts for the number of predictors in the model, which is useful for comparison with other models.</li>
+    </ul>
+</p>
+<p>
+    These metrics show that the model is highly accurate, with MSE, RMSE, and MAE values indicating small errors, and R² and Adjusted R² values close to 1, suggesting excellent model fit. This implies that the model can reliably predict the closing prices of NASDAQ-100 stocks, making it a valuable tool for investors and analysts looking to understand market trends or make investment decisions based on historical data.
+</p>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=26051329-145c-4195-bbed-bce75b4b3b15">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -8727,7 +8749,7 @@ Test Adjusted R²: 0.9992449541434455
 </div>
 </div>
 </div>
-</div>
+</div><p>Hello</p>
 </div>
 </main>
 </body>
