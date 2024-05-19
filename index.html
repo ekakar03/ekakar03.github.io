@@ -7561,11 +7561,8 @@ a.anchor-link {
 3  Alphabet Inc. (Class A)  GOOGL  Communication Services          Interactive Media &amp; Services
 4  Alphabet Inc. (Class C)   GOOG  Communication Services          Interactive Media &amp; Services
 </pre>
-    <p>Hello1</p>
 </div>
-    <p>Hello2</p>
 </div>
-    <p>Hello3</p>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
@@ -7575,7 +7572,13 @@ a.anchor-link {
 </div>
 </div>
 </div>
-</div><p>Hello1</p>
+</div><p>The provided Python code is designed to scrape the current NASDAQ-100 component stocks from Wikipedia, load historical stock data from CSV files, filter this data based on the scraped tickers, and then process and display the data. Here's how each part of the code works:</p>
+<p><strong>Step 1: Scrape NASDAQ-100 Components</strong><br>
+The script begins by fetching the web page that lists NASDAQ-100 index components using the `requests` library. It then parses the HTML of the page using `BeautifulSoup` to find a specific table tagged with 'wikitable sortable'. The `pandas` function `read_html` is then used to convert this HTML table into a DataFrame. This DataFrame presumably contains stock tickers among other details, and the script extracts a list of these tickers.</p>
+<p><strong>Step 2: Load and Filter Historical Data</strong><br>
+The script defines a path to a directory containing historical stock data in CSV format. It lists all files in this directory and filters to include only those ending with '.csv'. For each CSV file, the script checks if the stock symbol extracted from the file name is in the list of NASDAQ-100 tickers scraped from Wikipedia. If it is, the CSV file is read into a DataFrame using predefined column names. Any malformed lines are skipped during this process to avoid errors. Each stock's DataFrame is then added to a master DataFrame that compiles all the filtered data.</p>
+<p><strong>Output Explanation</strong><br>
+After processing, the script prints the total number of rows in the compiled DataFrame, which represents the aggregated historical data of NASDAQ-100 stocks that were found in the CSV files. It also displays the first few rows of this DataFrame to provide a snapshot of the data. Additionally, it calculates and prints the number of unique tickers represented in the DataFrame, indicating the diversity of data captured.</p>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=87bb0ecd-9b51-4fb9-9990-618dc9414478">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
